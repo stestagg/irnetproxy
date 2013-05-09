@@ -38,4 +38,5 @@ Features
  - On/Off management: irnetproxy will silently accept the on and off messages
  (5 and 6).  A standard ACK response is returned to the client, but the command
  is never sent to the device. This allows multiple scripts to try to turn off
- the device while other devices use it.
+ the device while other devices use it.  irnetproxy issues the ON command when 
+ it connects, and issues an OFF command when it is stopped.
