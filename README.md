@@ -1,4 +1,4 @@
-irNetProxy
+irNetProxy [![Build Status](https://travis-ci.org/stestagg/irnetproxy.png?branch=master)](https://travis-ci.org/stestagg/irnetproxy)
 ==========
 
 A network proxy for RedRat irNetBox MK-III infra-red blaster modules.
