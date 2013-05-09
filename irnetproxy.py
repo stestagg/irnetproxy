@@ -15,7 +15,6 @@ import socket
 import struct
 import sys
 import traceback
-import pkg_resources 
 
 
 def safe_recv(sock, num):
@@ -63,8 +62,8 @@ class IRNetBoxProxy(object):
         self.verbosity = verbosity
         self.counter = itertools.count()
         self.async_commands = {}
-        self.listen_socket = None
-        self.irnet_socket = None
+        self.listen_sock = None
+        self.irnet_sock = None
         self.read_sockets = {}
 
     def make_id(self):
@@ -73,7 +72,7 @@ class IRNetBoxProxy(object):
             command_id = self.counter.next()
         if command_id > self.USIZE_MAX:
             self.counter = itertools.count()
-            return self.get_id()
+            return self.make_id()
         return command_id
 
     def replace_sequence_id(self, data, new_id):
@@ -172,7 +171,7 @@ class IRNetBoxProxy(object):
         if fatal:
             sys.exit(1)
 
-    def run(self):
+    def connect(self):
         try:
             self.listen_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.listen_sock.bind(self.listen_addr)
@@ -185,17 +184,18 @@ class IRNetBoxProxy(object):
             self.irnet_sock.connect(self.irnet_addr)
         except Exception, e:
             self.error(e, "Could not connect to irNetBox.")
+        self.read_sockets = {
+            self.listen_sock.fileno(): self.listen_sock,
+            self.irnet_sock.fileno(): self.irnet_sock
+        }
 
+    def run(self):
+        self.connect()
         try:
             self.send_management_command(self.POWER_ON)
         except Exception, e:
             self.error(
                 e, "Connected to irNetBox, but could not send power on command")
-
-        self.read_sockets = {
-            self.listen_sock.fileno(): self.listen_sock,
-            self.irnet_sock.fileno(): self.irnet_sock
-        }
 
         self.info("Listening for connections on %s:%s" % self.listen_addr)
         try:
