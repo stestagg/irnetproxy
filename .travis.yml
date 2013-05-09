@@ -3,6 +3,4 @@ python:
  - "2.7"
 
 script: 
- - pwd
- - ls
  - python irnetproxy_test.py
